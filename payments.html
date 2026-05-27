@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIXIL — Elite Digital Art | Secure Payment</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg0:#080a0d;
+  --bg1:#0e1117;
+  --bg2:#141820;
+  --bg3:#1a2030;
+  --red:#e8293a;
+  --orange:#f0802e;
+  --pink:#e82970;
+  --red2:rgba(232,41,58,0.15);
+  --orange2:rgba(240,128,46,0.12);
+  --pink2:rgba(232,41,112,0.12);
+  --text1:#f2f0f5;
+  --text2:#9da3b0;
+  --text3:#555c6e;
+  --bord:rgba(255,255,255,0.06);
+  --bord2:rgba(232,41,58,0.3);
+  --card-bg:rgba(20,24,32,0.95);
+  --glow-r:rgba(232,41,58,0.6);
+  --glow-o:rgba(240,128,46,0.5);
+  --glow-p:rgba(232,41,112,0.5);
+}
+[data-theme="light"]{
+  --bg0:#e8e6e2;
+  --bg1:#f0ede8;
+  --bg2:#f8f6f2;
+  --bg3:#ffffff;
+  --red2:rgba(232,41,58,0.08);
+  --orange2:rgba(240,128,46,0.07);
+  --pink2:rgba(232,41,112,0.07);
+  --text1:#12141a;
+  --text2:#454a58;
+  --text3:#8a909f;
+  --bord:rgba(0,0,0,0.07);
+  --bord2:rgba(232,41,58,0.25);
+  --card-bg:rgba(255,255,255,0.97);
+  --glow-r:rgba(232,41,58,0.25);
+  --glow-o:rgba(240,128,46,0.2);
+  --glow-p:rgba(232,41,112,0.2);
+}
+
+body{
+  font-family:'Rajdhani',sans-serif;
+  background:var(--bg0);
+  color:var(--text1);
+  min-height:100vh;
+  overflow-x:hidden;
+  transition:background .4s,color .4s;
+}
+
+/* ── CANVAS LIGHTNING ── */
+#lightning-canvas{
+  position:fixed;inset:0;z-index:0;
+  pointer-events:none;opacity:0.7;
+}
+[data-theme="light"] #lightning-canvas{opacity:0.35}
+
+/* ── THEME BUTTON ── */
+.theme-btn{
+  position:fixed;top:18px;right:18px;z-index:200;
+  width:40px;height:40px;border-radius:50%;
+  background:var(--bg2);
+  border:1.5px solid var(--bord2);
+  color:var(--text1);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;
+  box-shadow:0 0 18px var(--glow-r);
+  transition:all .3s;
+}
+.theme-btn:hover{
+  transform:scale(1.12) rotate(15deg);
+  box-shadow:0 0 30px var(--glow-r),0 0 60px var(--glow-o);
+  border-color:var(--orange);
+}
+
+/* ── PAGE WRAP ── */
+.wrap{
+  position:relative;z-index:2;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;
+  padding:50px 20px 80px;
+}
+
+/* ── HEADER ── */
+.header{
+  text-align:center;
+  margin-bottom:48px;
+  animation:dropIn .9s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes dropIn{from{opacity:0;transform:translateY(-36px)}to{opacity:1;transform:translateY(0)}}
+
+/* Logo SVG container */
+.logo-ring{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:120px;height:120px;border-radius:26px;
+  background:var(--bg2);
+  border:1.5px solid var(--bord2);
+  position:relative;margin-bottom:22px;
+  box-shadow:0 0 40px var(--glow-r),0 0 80px var(--glow-o),inset 0 0 30px rgba(232,41,58,0.05);
+  animation:pulse-ring 3s ease-in-out infinite;
+}
+@keyframes pulse-ring{
+  0%,100%{box-shadow:0 0 40px var(--glow-r),0 0 80px var(--glow-o)}
+  50%{box-shadow:0 0 60px var(--glow-r),0 0 120px var(--glow-o),0 0 200px var(--glow-p)}
+}
+.logo-ring svg{width:90px;height:90px}
+
+/* Orbiting dot */
+.orbit{
+  position:absolute;
+  width:130px;height:130px;
+  border-radius:50%;
+  animation:spin 6s linear infinite;
+  pointer-events:none;
+}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.orbit-dot{
+  position:absolute;top:-5px;left:50%;
+  width:10px;height:10px;border-radius:50%;
+  background:var(--red);
+  box-shadow:0 0 12px var(--red),0 0 24px var(--red);
+  transform:translateX(-50%);
+}
+.orbit2{animation-duration:9s;animation-direction:reverse}
+.orbit2 .orbit-dot{background:var(--orange);box-shadow:0 0 12px var(--orange),0 0 24px var(--orange)}
+
+.brand-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:60px;letter-spacing:8px;
+  background:linear-gradient(135deg,var(--red) 0%,var(--orange) 50%,var(--pink) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;line-height:1;margin-bottom:5px;
+  filter:drop-shadow(0 0 20px rgba(232,41,58,0.5));
+  animation:flicker 5s ease-in-out infinite;
+}
+@keyframes flicker{
+  0%,95%,100%{filter:drop-shadow(0 0 20px rgba(232,41,58,0.5))}
+  96%{filter:drop-shadow(0 0 4px rgba(232,41,58,0.2))}
+  97%{filter:drop-shadow(0 0 30px rgba(232,41,58,0.8))}
+}
+.brand-sub{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:5px;
+  color:var(--text3);text-transform:uppercase;margin-bottom:16px;
+}
+.accent-line{
+  width:90px;height:2px;margin:0 auto 16px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--red),var(--orange),var(--pink),transparent);
+  animation:line-glow 2s ease-in-out infinite alternate;
+}
+@keyframes line-glow{
+  from{opacity:0.6;transform:scaleX(0.8)}
+  to{opacity:1;transform:scaleX(1.2)}
+}
+.tagline{font-size:14px;color:var(--text2);letter-spacing:1.5px;font-weight:600}
+
+/* ── PAYMENT CARD ── */
+.card{
+  width:100%;max-width:540px;
+  background:var(--card-bg);
+  border:1px solid var(--bord);
+  border-radius:22px;
+  position:relative;overflow:hidden;
+  animation:riseUp 1s .2s cubic-bezier(.22,1,.36,1) both;
+  backdrop-filter:blur(12px);
+}
+@keyframes riseUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+
+/* Sweeping light effect on card */
+.card::before{
+  content:'';position:absolute;
+  top:-60%;left:-60%;width:50%;height:220%;
+  background:linear-gradient(100deg,transparent,rgba(232,41,58,0.04),rgba(240,128,46,0.06),transparent);
+  transform:skewX(-15deg);
+  animation:sweep 4s ease-in-out infinite;
+  pointer-events:none;z-index:0;
+}
+@keyframes sweep{
+  0%{left:-60%;opacity:0}
+  10%{opacity:1}
+  90%{opacity:1}
+  100%{left:160%;opacity:0}
+}
+
+/* Top edge glow */
+.card::after{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--red),var(--orange),var(--pink),transparent);
+  animation:edge-pulse 2.5s ease-in-out infinite alternate;
+}
+@keyframes edge-pulse{
+  from{opacity:0.4}to{opacity:1}
+}
+
+/* Corner spark */
+.spark{
+  position:absolute;top:0;right:0;
+  width:80px;height:80px;overflow:hidden;pointer-events:none;
+}
+.spark::before{
+  content:'';position:absolute;
+  top:-40px;right:-40px;
+  width:80px;height:80px;
+  background:linear-gradient(135deg,var(--red),var(--pink));
+  transform:rotate(45deg);opacity:0.18;
+}
+
+.card-head{
+  padding:28px 32px 24px;
+  border-bottom:1px solid var(--bord);
+  position:relative;z-index:1;
+}
+.card-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;letter-spacing:3px;
+  color:var(--text1);margin-bottom:4px;
+}
+.card-sub{font-size:12px;color:var(--text3);letter-spacing:.5px}
+
+.card-body{padding:28px 32px;position:relative;z-index:1}
+
+/* Trust badges */
+.badges{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.badge{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 11px;border-radius:8px;
+  border:1px solid var(--bord);
+  background:var(--bg2);
+  font-size:10px;letter-spacing:1.5px;
+  color:var(--text2);font-weight:700;text-transform:uppercase;
+  position:relative;overflow:hidden;
+}
+.badge::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,0.04));
+}
+.pip{width:7px;height:7px;border-radius:50%;flex-shrink:0;animation:blink 1.8s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.pip-r{background:var(--red);box-shadow:0 0 8px var(--red)}
+.pip-o{background:var(--orange);box-shadow:0 0 8px var(--orange);animation-delay:.4s}
+.pip-p{background:var(--pink);box-shadow:0 0 8px var(--pink);animation-delay:.8s}
+
+/* Info rows */
+.rows{margin-bottom:4px}
+.row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 0;border-bottom:1px solid var(--bord);
+}
+.row:last-child{border-bottom:none}
+.rl{
+  font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--text3);font-weight:700;
+}
+.rv{font-size:15px;font-weight:700;letter-spacing:.5px;color:var(--text1)}
+.rv-grad{
+  background:linear-gradient(135deg,var(--red),var(--orange),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;
+}
+
+/* PayPal zone */
+.pp-zone{
+  margin-top:24px;padding-top:24px;
+  border-top:1px solid var(--bord);
+  position:relative;
+}
+.pp-zone::before{
+  content:'';position:absolute;
+  top:-1px;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--red),var(--orange),var(--pink),transparent);
+  opacity:.5;
+}
+.pp-label{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:3px;
+  color:var(--text3);text-transform:uppercase;
+  text-align:center;margin-bottom:18px;
+  display:flex;align-items:center;gap:10px;
+}
+.pp-label::before,.pp-label::after{content:'';flex:1;height:1px;background:var(--bord)}
+
+#paypal-container-RT8TJKTBAPL36{min-height:50px}
+
+/* Security note */
+.sec-note{
+  margin-top:18px;padding:12px 15px;
+  background:var(--bg2);border-radius:10px;
+  border:1px solid var(--bord);
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:11.5px;color:var(--text3);letter-spacing:.3px;line-height:1.5;
+}
+.sec-icon{width:18px;height:18px;flex-shrink:0;color:var(--orange);margin-top:1px}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:36px;text-align:center;
+  animation:riseUp 1s .5s cubic-bezier(.22,1,.36,1) both;
+}
+.footer-copy{font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:10px}
+.footer-nav{display:flex;gap:18px;justify-content:center}
+.footer-nav a{
+  font-size:10px;color:var(--text3);text-decoration:none;
+  text-transform:uppercase;letter-spacing:2px;font-weight:700;
+  transition:color .25s;
+}
+.footer-nav a:hover{color:var(--red)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:560px){
+  .brand-name{font-size:44px}
+  .card-head,.card-body{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Lightning canvas -->
+<canvas id="lightning-canvas"></canvas>
+
+<!-- Theme toggle -->
+<button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+  <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/>
+    <line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/>
+    <line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+</button>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo-ring">
+      <!-- Orbiting particles -->
+      <div class="orbit"><div class="orbit-dot"></div></div>
+      <div class="orbit orbit2"><div class="orbit-dot"></div></div>
+      <!-- VIXIL X Logo SVG (recreated from uploaded image) -->
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="redGlow">
+            <feGaussianBlur stdDeviation="2.5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="darkGlow">
+            <feGaussianBlur stdDeviation="1.5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Left V shape (red glow) -->
+        <g filter="url(#redGlow)">
+          <polyline points="18,12 50,62 50,62 34,88 18,62 34,38" stroke="#e8293a" stroke-width="3.5" stroke-linejoin="round" fill="none"/>
+          <polyline points="24,14 50,58 38,82 22,58 36,36" stroke="#e8293a" stroke-width="1.5" stroke-linejoin="round" fill="none" opacity="0.5"/>
+        </g>
+        <!-- Right C/arc shape (dark, no glow) -->
+        <g filter="url(#darkGlow)">
+          <polyline points="82,12 50,62 50,62 66,88 82,62 66,38" stroke="#3a3a3a" stroke-width="3.5" stroke-linejoin="round" fill="none"/>
+          <polyline points="76,14 50,58 62,82 78,58 64,36" stroke="#555" stroke-width="1.5" stroke-linejoin="round" fill="none" opacity="0.5"/>
+        </g>
+        <!-- Center overlap accent -->
+        <line x1="50" y1="44" x2="50" y2="74" stroke="#e8293a" stroke-width="1" opacity="0.4"/>
+      </svg>
+    </div>
+
+    <div class="brand-name">VIXIL</div>
+    <div class="brand-sub">Elite Digital Art</div>
+    <div class="accent-line"></div>
+    <p class="tagline">— Secure Payment Portal —</p>
+  </header>
+
+  <!-- CARD -->
+  <div class="card">
+    <div class="spark"></div>
+    <div class="card-head">
+      <div class="card-title">Complete Your Payment</div>
+      <div class="card-sub">PayPal · 256-bit SSL · Instant confirmation</div>
+    </div>
+    <div class="card-body">
+      <div class="badges">
+        <div class="badge"><span class="pip pip-r"></span>Secure</div>
+        <div class="badge"><span class="pip pip-o"></span>Encrypted</div>
+        <div class="badge"><span class="pip pip-p"></span>Instant</div>
+        <div class="badge"><span class="pip pip-r" style="animation-delay:.6s"></span>Verified</div>
+      </div>
+
+      <div class="rows">
+        <div class="row">
+          <span class="rl">Studio</span>
+          <span class="rv">VIXIL Studios</span>
+        </div>
+        <div class="row">
+          <span class="rl">Service</span>
+          <span class="rv">Elite Digital Art</span>
+        </div>
+        <div class="row">
+          <span class="rl">Currency</span>
+          <span class="rv">USD</span>
+        </div>
+        <div class="row">
+          <span class="rl">Status</span>
+          <span class="rv-grad">Ready</span>
+        </div>
+      </div>
+
+      <div class="pp-zone">
+        <div class="pp-label">Pay securely with PayPal</div>
+        <div id="paypal-container-RT8TJKTBAPL36"></div>
+      </div>
+
+      <div class="sec-note">
+        <svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span>Payments are processed securely by PayPal. VIXIL never stores or accesses your payment details.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-copy">© 2025 VIXIL Elite Digital Art · All rights reserved</div>
+    <nav class="footer-nav">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+    </nav>
+  </footer>
+
+</div>
+
+<!-- Theme toggle -->
+<script>
+(function(){
+  const btn=document.getElementById('themeBtn');
+  const moon=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+  const sun=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+  let dark=true;
+  btn.addEventListener('click',function(){
+    dark=!dark;
+    document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+    btn.innerHTML=dark?sun:moon;
+  });
+})();
+</script>
+
+<!-- Lightning canvas animation -->
+<script>
+(function(){
+  const canvas=document.getElementById('lightning-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,bolts=[];
+
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+  resize();
+  window.addEventListener('resize',resize);
+
+  const COLORS=['#e8293a','#f0802e','#e82970','#ff6b35','#c0392b'];
+
+  function makeBolt(x1,y1,x2,y2,depth){
+    if(depth===0)return[[x1,y1,x2,y2]];
+    const mx=(x1+x2)/2+(Math.random()-.5)*(Math.hypot(x2-x1,y2-y1)*0.5);
+    const my=(y1+y2)/2+(Math.random()-.5)*(Math.hypot(x2-x1,y2-y1)*0.5);
+    return [...makeBolt(x1,y1,mx,my,depth-1),...makeBolt(mx,my,x2,y2,depth-1)];
+  }
+
+  function spawnBolt(){
+    const startX=Math.random()*W;
+    const startY=0;
+    const endX=startX+(Math.random()-.5)*300;
+    const endY=H*(.4+Math.random()*.6);
+    const segs=makeBolt(startX,startY,endX,endY,5);
+    const color=COLORS[Math.floor(Math.random()*COLORS.length)];
+    bolts.push({segs,color,life:1,decay:.04+Math.random()*.04,width:1+Math.random()*2});
+    // branch
+    if(Math.random()>.4){
+      const mid=segs[Math.floor(segs.length/2)];
+      const bsegs=makeBolt(mid[0],mid[1],mid[0]+(Math.random()-.5)*200,mid[1]+100+Math.random()*150,3);
+      bolts.push({segs:bsegs,color,life:.7,decay:.06+Math.random()*.04,width:.8});
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    bolts=bolts.filter(b=>b.life>0);
+    for(const b of bolts){
+      ctx.globalAlpha=b.life*.9;
+      ctx.strokeStyle=b.color;
+      ctx.lineWidth=b.width;
+      ctx.shadowBlur=12;
+      ctx.shadowColor=b.color;
+      ctx.beginPath();
+      for(let i=0;i<b.segs.length;i++){
+        const s=b.segs[i];
+        if(i===0)ctx.moveTo(s[0],s[1]);
+        ctx.lineTo(s[2],s[3]);
+      }
+      ctx.stroke();
+      ctx.shadowBlur=0;
+      b.life-=b.decay;
+    }
+    ctx.globalAlpha=1;
+  }
+
+  let frame=0;
+  function loop(){
+    frame++;
+    if(frame%90===0&&bolts.length<12)spawnBolt();
+    draw();
+    requestAnimationFrame(loop);
+  }
+  // Initial bolts
+  setTimeout(spawnBolt,300);
+  setTimeout(spawnBolt,700);
+  loop();
+})();
+</script>
+
+<!-- PayPal SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=BAAu6kOg8J96NV3wIvev958HfGbvJcFtSfb9LaneczIcsXz09zPzXVOdXCzLH-qF4EsqIpdFLET9pNYV7k&components=hosted-buttons&disable-funding=venmo&currency=USD"></script>
+<script>
+  paypal.HostedButtons({
+    hostedButtonId:"RT8TJKTBAPL36"
+  }).render("#paypal-container-RT8TJKTBAPL36");
+</script>
+
+</body>
+</html>
